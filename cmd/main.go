@@ -1,6 +1,9 @@
 package main
 
-import "strconv"
+import (
+	"strconv"
+	"workerpool/internal/workerpool"
+)
 
 func main() {
 	const numJobs = 5
@@ -8,7 +11,7 @@ func main() {
 	jobs := make(chan string, numJobs)
 	results := make(chan string, numJobs)
 
-	workerpool := NewWorkerPool(jobs, results)
+	workerpool := workerpool.NewWorkerPool(jobs, results)
 
 	for i := 0; i < numWorkers; i++ {
 		workerpool.Add()

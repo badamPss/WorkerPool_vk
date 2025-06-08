@@ -1,4 +1,4 @@
-package main
+package workerpool
 
 type WorkerPool struct {
 	jobs    chan string
