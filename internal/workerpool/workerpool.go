@@ -28,6 +28,7 @@ func (wp *WorkerPool) Remove(id int) {
 	if worker, ok := wp.workers[id]; ok {
 		worker.Stop()
 		delete(wp.workers, id)
+		fmt.Printf("Worker %d removed\n", id)
 	}
 }
 
