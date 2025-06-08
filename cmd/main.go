@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	const numJobs = 5
-	const numWorkers = 3
+	const numJobs = 10
+	const numWorkers = 5
 	jobs := make(chan string, numJobs)
 	results := make(chan string, numJobs)
 
@@ -17,12 +17,13 @@ func main() {
 		workerpool.Add()
 	}
 
-	workerpool.Start()
-
 	workerpool.Remove(1)
+	workerpool.Remove(2)
+
+	workerpool.Add()
 
 	for j := 1; j <= numJobs; j++ {
-		jobs <- strconv.Itoa(j)
+		jobs <- "task " + strconv.Itoa(j)
 	}
 
 	for a := 1; a <= numJobs; a++ {

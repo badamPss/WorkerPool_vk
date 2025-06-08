@@ -21,6 +21,7 @@ func NewWorker(id int, jobs <-chan string, results chan<- string) *Worker {
 }
 
 func (w *Worker) Run() {
+	fmt.Printf("Starting worker %d\n", w.id)
 	go func() {
 		for {
 			select {

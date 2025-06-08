@@ -1,5 +1,7 @@
 package workerpool
 
+import "fmt"
+
 type WorkerPool struct {
 	jobs    chan string
 	results chan<- string
@@ -17,6 +19,7 @@ func NewWorkerPool(jobs chan string, result chan<- string) *WorkerPool {
 func (wp *WorkerPool) Add() {
 	worker := NewWorker(wp.nextID, wp.jobs, wp.results)
 	wp.workers[wp.nextID] = worker
+	fmt.Printf("Worker %d added\n", wp.nextID)
 	worker.Run()
 	wp.nextID++
 }
@@ -28,16 +31,6 @@ func (wp *WorkerPool) Remove(id int) {
 	}
 }
 
-func (wp *WorkerPool) Start() {
-	for _, worker := range wp.workers {
-		go worker.Run()
-	}
-}
-
 func (wp *WorkerPool) Stop() {
 	close(wp.jobs)
-}
-
-func (wp *WorkerPool) Results() chan<- string {
-	return wp.results
 }
