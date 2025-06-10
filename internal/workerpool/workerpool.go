@@ -22,24 +22,27 @@ func NewWorkerPool(jobs chan string, result chan<- string) *WorkerPool {
 
 func (wp *WorkerPool) Add() {
 	wp.mu.Lock()
-	worker := NewWorker(wp.nextID, wp.jobs, wp.results)
+	defer wp.mu.Unlock()
+
+	worker := NewWorker(wp.nextID, wp.jobs)
 	wp.workers[wp.nextID] = worker
 	fmt.Printf("Worker %d added\n", wp.nextID)
 	wp.nextID++
-	wp.mu.Unlock()
-	worker.Run()
+	worker.Run(wp.results)
 }
 
 func (wp *WorkerPool) Remove(id int) {
 	wp.mu.Lock()
+	defer wp.mu.Unlock()
+
 	if worker, ok := wp.workers[id]; ok {
 		worker.Stop()
 		delete(wp.workers, id)
 		fmt.Printf("Worker %d removed\n", id)
 	}
-	wp.mu.Unlock()
 }
 
 func (wp *WorkerPool) Stop() {
 	close(wp.jobs)
+	fmt.Println("Worker pool stopped")
 }

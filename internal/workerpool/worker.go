@@ -2,25 +2,22 @@ package workerpool
 
 import (
 	"fmt"
-	"time"
 )
 
 type Worker struct {
-	id      int
-	jobs    <-chan string
-	results chan<- string
-	quit    chan struct{}
+	id   int
+	jobs <-chan string
+	quit chan struct{}
 }
 
-func NewWorker(id int, jobs <-chan string, results chan<- string) *Worker {
+func NewWorker(id int, jobs <-chan string) *Worker {
 	return &Worker{
-		id:      id,
-		jobs:    jobs,
-		results: results,
-		quit:    make(chan struct{})}
+		id:   id,
+		jobs: jobs,
+		quit: make(chan struct{})}
 }
 
-func (w *Worker) Run() {
+func (w *Worker) Run(results chan<- string) {
 	fmt.Printf("Starting worker %d\n", w.id)
 	go func() {
 		for {
@@ -34,9 +31,8 @@ func (w *Worker) Run() {
 					return
 				}
 				fmt.Println("worker", w.id, "started job", job)
-				time.Sleep(time.Second)
+				results <- job
 				fmt.Println("worker", w.id, "finished job", job)
-				w.results <- job
 			}
 		}
 	}()
